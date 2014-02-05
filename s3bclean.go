@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"syscall"
 
 	"github.com/crowdmob/goamz/aws"
@@ -35,14 +34,13 @@ func main() {
 	auth.SecretKey = awsSecret
 	s3c := s3.New(*auth, aws.Regions[s3Region])
 	s3bucket := s3c.Bucket(bucket)
-	logger.Println(s3bucket)
 
 	// making i with leading zeros with this format
-	format := "%0" + strconv.Itoa(width) + "d"
+	format := fmt.Sprintf("%%0%dd", width)
 	for i := start; i <= end; i += 1 {
 		suffix := fmt.Sprintf(format, i)
 		key := prefix + suffix
-		logger.Printf("Deleting S3 key: %s", key)
+		logger.Printf("Deleting S3 key: %s%s", bucket, key)
 		err := s3bucket.Del(key)
 		if err != nil {
 			logger.Printf("Got error deleting key: %s", err)
